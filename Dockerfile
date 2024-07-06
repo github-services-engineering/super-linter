@@ -26,7 +26,7 @@ FROM rhysd/actionlint:1.7.1 AS actionlint
 FROM scalameta/scalafmt:v3.8.3 AS scalafmt
 FROM zricethezav/gitleaks:v8.18.4 AS gitleaks
 FROM yoheimuta/protolint:0.50.5 AS protolint
-FROM ghcr.io/clj-kondo/clj-kondo:2024.08.01-alpine AS clj-kondo
+FROM ghcr.io/clj-kondo/clj-kondo:2024.08.01 AS clj-kondo
 FROM dart:3.5.1-sdk AS dart
 FROM mcr.microsoft.com/dotnet/sdk:8.0.401-alpine3.20 AS dotnet-sdk
 FROM mcr.microsoft.com/powershell:7.4-alpine-3.17 AS powershell
@@ -65,6 +65,8 @@ RUN apk add --no-cache \
     bash
 
 SHELL ["/bin/bash", "-o", "errexit", "-o", "nounset", "-o", "pipefail", "-c"]
+
+ARG TARGETARCH
 
 COPY dependencies/python/ /stage
 WORKDIR /stage
@@ -113,10 +115,10 @@ SHELL ["/bin/bash", "-o", "errexit", "-o", "nounset", "-o", "pipefail", "-c"]
 COPY scripts/install-lintr.sh scripts/install-r-package-or-fail.R /
 RUN /install-lintr.sh && rm -rf /install-lintr.sh /install-r-package-or-fail.R
 
-FROM powershell AS powershell-installer
-
+FROM --platform=linux/amd64 powershell AS powershell-installer
 # Copy the value of the PowerShell install directory to a file so we can reuse it
 # when copying PowerShell stuff in the main image
+RUN echo "${PS_VERSION}" > /tmp/PS_VERSION
 RUN echo "${PS_INSTALL_FOLDER}" > /tmp/PS_INSTALL_FOLDER
 
 FROM php-composer AS php-linters
@@ -368,7 +370,7 @@ COPY --from=kubeconfrm /kubeconform /usr/bin/
 #####################
 # Install clj-kondo #
 #####################
-COPY --from=clj-kondo /bin/clj-kondo /usr/bin/
+COPY --from=clj-kondo /usr/local/bin/clj-kondo /usr/bin/
 
 ####################
 # Install dart-sdk #
@@ -439,6 +441,8 @@ ENTRYPOINT ["/action/lib/linter.sh"]
 
 FROM base_image AS slim
 
+ARG TARGETARCH
+
 # Run to build version file and validate image
 ENV IMAGE="slim"
 COPY scripts/linterVersions.sh /
@@ -502,16 +506,27 @@ RUN dotnet help
 #########################################
 # Install Powershell + PSScriptAnalyzer #
 #########################################
+COPY --from=powershell-installer /tmp/PS_VERSION /tmp/PS_VERSION
 COPY --from=powershell-installer /tmp/PS_INSTALL_FOLDER /tmp/PS_INSTALL_FOLDER
 COPY --from=powershell /opt/microsoft/powershell /opt/microsoft/powershell
+ARG TARGETARCH
 # Disable Powershell telemetry
 ENV POWERSHELL_TELEMETRY_OPTOUT=1
 ARG PSSA_VERSION='1.22.0'
 RUN PS_INSTALL_FOLDER="$(cat /tmp/PS_INSTALL_FOLDER)" \
     && echo "PS_INSTALL_FOLDER: ${PS_INSTALL_FOLDER}" \
-    && ln -s "${PS_INSTALL_FOLDER}/pwsh" /usr/bin/pwsh \
+    && if [[ "${TARGETARCH}" == "amd64" ]]; then \
+    ln -s "${PS_INSTALL_FOLDER}/pwsh" /usr/bin/pwsh \
     && chmod a+x,o-w "${PS_INSTALL_FOLDER}/pwsh" \
     && pwsh -c "Install-Module -Name PSScriptAnalyzer -RequiredVersion ${PSSA_VERSION} -Scope AllUsers -Force" \
+    ; else \
+    # Download arm64 version of PowerShell
+    PS_VERSION="$(cat /tmp/PS_VERSION)" \
+    && PS_PACKAGE_URL="https://github.com/PowerShell/PowerShell/releases/download/v${PS_VERSION}/powershell-${PS_VERSION}-linux-arm64.tar.gz" \
+    && wget -q -O - "${PS_PACKAGE_URL}" | tar -xz -C "${PS_INSTALL_FOLDER}" \
+    && ln -s "${PS_INSTALL_FOLDER}/pwsh" /usr/bin/pwsh \
+    && chmod a+x,o-w "${PS_INSTALL_FOLDER}/pwsh" \
+    ; fi \
     && rm -rf /tmp/PS_INSTALL_FOLDER
 
 #############################################################
@@ -522,6 +537,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN /install-arm-ttk.sh && rm -rf /install-a
 
 # Run to build version file and validate image again because we installed more linters
 ENV IMAGE="standard"
+ARG TARGETARCH
 COPY scripts/linterVersions.sh /
 RUN /linterVersions.sh \
     && rm -rfv /linterVersions.sh

@@ -86,7 +86,7 @@ jobs:
       # Ref: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
       # github.head_ref: head_ref or source branch of the pull request
       # github.ref: ref of the branch that triggered the workflow
-      group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}-${{ github.event_name }}-${{ matrix.images.target }}
+      group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}-${{ github.event_name }}-${{ matrix.images.target }}-${{ matrix.images.platform }}
       cancel-in-progress: true
     strategy:
       fail-fast: false
@@ -94,9 +94,17 @@ jobs:
         images:
           - prefix: slim-
             target: slim
+            platform: linux/amd64
           - prefix: ""
             target: standard
-    timeout-minutes: 60
+            platform: linux/amd64
+          - prefix: slim-
+            target: slim
+            platform: linux/arm64/v8
+          - prefix: ""
+            target: standard
+            platform: linux/arm64/v8
+    timeout-minutes: 180
     env:
       CONTAINER_IMAGE_ID: "ghcr.io/super-linter/super-linter:${{ matrix.images.prefix }}latest"
       CONTAINER_IMAGE_TARGET: "${{ matrix.images.target }}"
@@ -115,6 +123,9 @@ jobs:
           sudo rm -rf /opt/ghc || true
           sudo rm -rf /usr/local/.ghcup || true
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -130,6 +141,7 @@ jobs:
           cache-from: type=registry,ref=${{ env.CONTAINER_IMAGE_ID }}-buildcache
           outputs: type=docker,dest=/tmp/${{ env.CONTAINER_IMAGE_OUTPUT_IMAGE_NAME }}.tar
           push: false
+          platforms: ${{ matrix.images.platform }}
           secrets: |
             GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           tags: |
@@ -198,6 +210,7 @@ jobs:
 
       - name: Test Local Action (debug log)
         uses: ./
+        if: matrix.images.platform == 'linux/amd64'
         env:
           LOG_LEVEL: DEBUG
           CREATE_LOG_FILE: true
@@ -210,11 +223,13 @@ jobs:
           VALIDATE_JAVASCRIPT_STANDARD: false
 
       - name: Get the contents of the log file
+        if: matrix.images.platform == 'linux/amd64'
         run: |
           sudo cat super-linter.log
           sudo rm -v super-linter.log
 
       - name: Test Local Action (default log)
+        if: matrix.images.platform == 'linux/amd64'
         uses: ./
         env:
           VALIDATE_ALL_CODEBASE: false
