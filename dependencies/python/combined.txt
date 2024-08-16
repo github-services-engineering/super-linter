@@ -1,0 +1,16 @@
+ansible-lint==24.10.0
+black==24.10.0
+cfn-lint==1.19.0
+checkov==3.2.295
+cpplint==2.0.0
+flake8==7.1.1
+isort==5.13.2
+mypy==1.13.0
+pyink==24.10.0
+pylint==3.3.1
+ruff==0.7.3
+snakefmt==0.10.2
+snakemake==8.25.3
+sqlfluff==3.2.5
+yamllint==1.35.1
+yq==3.4.3
