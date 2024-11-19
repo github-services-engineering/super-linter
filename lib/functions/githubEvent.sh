@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Push event payload ref: https://docs.github.com/en/webhooks/webhook-events-and-payloads#push
+
 function GetGithubPushEventCommitCount() {
   local GITHUB_EVENT_FILE_PATH
   GITHUB_EVENT_FILE_PATH="${1}"

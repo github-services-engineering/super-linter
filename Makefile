@@ -4,7 +4,7 @@
 all: info docker test ## Run all targets.
 
 .PHONY: test
-test: info validate-container-image-labels docker-build-check docker-dev-container-build-check test-lib inspec lint-codebase fix-codebase test-default-config-files test-actions-runner-debug test-actions-steps-debug test-runner-debug test-find lint-subset-files test-custom-ssl-cert test-non-default-workdir test-git-flags test-non-default-home-directory test-git-initial-commit test-git-merge-commit-push test-log-level test-use-find-and-ignore-gitignored-files test-linters-expect-failure-log-level-notice test-bash-exec-library-expect-success test-bash-exec-library-expect-failure test-save-super-linter-output test-save-super-linter-output-custom-path test-save-super-linter-custom-summary test-custom-gitleaks-log-level test-dont-save-super-linter-log-file test-dont-save-super-linter-output test-linters test-linters-fix-mode ## Run the test suite
+test: info validate-container-image-labels docker-build-check docker-dev-container-build-check test-lib inspec lint-codebase fix-codebase test-default-config-files test-actions-runner-debug test-actions-steps-debug test-runner-debug test-find lint-subset-files test-custom-ssl-cert test-non-default-workdir test-git-flags test-non-default-home-directory test-git-initial-commit test-git-merge-commit-push test-git-merge-commit-push-tag test-log-level test-use-find-and-ignore-gitignored-files test-linters-expect-failure-log-level-notice test-bash-exec-library-expect-success test-bash-exec-library-expect-failure test-save-super-linter-output test-save-super-linter-output-custom-path test-save-super-linter-custom-summary test-custom-gitleaks-log-level test-dont-save-super-linter-log-file test-dont-save-super-linter-output test-linters test-linters-fix-mode ## Run the test suite
 
 # if this session isn't interactive, then we don't want to allocate a
 # TTY, which would fail, but if it is interactive, we do want to attach
@@ -546,6 +546,13 @@ test-git-merge-commit-push: ## Run super-linter against a repository that has me
 	$(CURDIR)/test/run-super-linter-tests.sh \
 		$(SUPER_LINTER_TEST_CONTAINER_URL) \
 		"run_test_case_merge_commit_push" \
+		"$(IMAGE)"
+
+.PHONY: test-git-merge-commit-push-tag
+test-git-merge-commit-push-tag: ## Run super-linter against a repository that has merge commits and pushed a tag
+	$(CURDIR)/test/run-super-linter-tests.sh \
+		$(SUPER_LINTER_TEST_CONTAINER_URL) \
+		"run_test_case_merge_commit_push_tag" \
 		"$(IMAGE)"
 
 .PHONY: test-use-find-and-ignore-gitignored-files

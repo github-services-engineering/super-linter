@@ -10,25 +10,24 @@ source "test/testUtils.sh"
 # shellcheck source=/dev/null
 source "lib/functions/validation.sh"
 
-function IsUnsignedIntegerSuccessTest() {
+IsUnsignedIntegerTest() {
   local FUNCTION_NAME
   FUNCTION_NAME="${FUNCNAME[0]}"
   info "${FUNCTION_NAME} start"
 
-  if ! IsUnsignedInteger 1; then
-    fatal "${FUNCTION_NAME} failed"
+  local INPUT=1
+  if ! IsUnsignedInteger ${INPUT}; then
+    fatal "${FUNCTION_NAME} should have succeeded when checking ${INPUT}"
   fi
 
-  notice "${FUNCTION_NAME} PASS"
-}
+  INPUT="test"
+  if IsUnsignedInteger "${INPUT}"; then
+    fatal "${FUNCTION_NAME} should have failed when checking ${INPUT}"
+  fi
 
-function IsUnsignedIntegerFailureTest() {
-  local FUNCTION_NAME
-  FUNCTION_NAME="${FUNCNAME[0]}"
-  info "${FUNCTION_NAME} start"
-
-  if IsUnsignedInteger "test"; then
-    fatal "${FUNCTION_NAME} failed"
+  INPUT=-1
+  if IsUnsignedInteger ${INPUT}; then
+    fatal "${FUNCTION_NAME} should have failed when checking ${INPUT}"
   fi
 
   notice "${FUNCTION_NAME} PASS"
@@ -561,8 +560,7 @@ ValidateCommitlintConfigurationTest() {
   notice "${FUNCTION_NAME} PASS"
 }
 
-IsUnsignedIntegerSuccessTest
-IsUnsignedIntegerFailureTest
+IsUnsignedIntegerTest
 ValidateDeprecatedVariablesTest
 ValidateGitHubUrlsTest
 ValidateSuperLinterSummaryOutputPathTest

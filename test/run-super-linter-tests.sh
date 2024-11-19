@@ -114,6 +114,35 @@ initialize_git_repository_and_test_args() {
   COMMAND_TO_RUN+=(-e VALIDATE_ALL_CODEBASE=false)
 }
 
+initialize_git_repository_and_test_args_merge_commit() {
+  local GIT_REPOSITORY_PATH="${1}"
+  local GITHUB_EVENT_FILE_PATH="${2}"
+
+  initialize_git_repository_and_test_args "${GIT_REPOSITORY_PATH}" "${GITHUB_EVENT_FILE_PATH}"
+
+  local NEW_BRANCH_NAME="branch-1"
+  git -C "${GIT_REPOSITORY_PATH}" switch --create "${NEW_BRANCH_NAME}"
+  cp -v "test/data/github-event/github-event-push-merge-commit.json" "${GIT_REPOSITORY_PATH}/new-file-1.json"
+  git -C "${GIT_REPOSITORY_PATH}" add .
+  git -C "${GIT_REPOSITORY_PATH}" commit -m "feat: add new file 1"
+  cp -v "test/data/github-event/github-event-push-merge-commit.json" "${GIT_REPOSITORY_PATH}/new-file-2.json"
+  git -C "${GIT_REPOSITORY_PATH}" add .
+  git -C "${GIT_REPOSITORY_PATH}" commit -m "feat: add new file 2"
+  cp -v "test/data/github-event/github-event-push-merge-commit.json" "${GIT_REPOSITORY_PATH}/new-file-3.json"
+  git -C "${GIT_REPOSITORY_PATH}" add .
+  git -C "${GIT_REPOSITORY_PATH}" commit -m "feat: add new file 3"
+  git -C "${GIT_REPOSITORY_PATH}" switch "${DEFAULT_BRANCH}"
+  # Force the creation of a merge commit
+  git -C "${GIT_REPOSITORY_PATH}" merge \
+    -m "Merge commit" \
+    --no-ff \
+    "${NEW_BRANCH_NAME}"
+  git -C "${GIT_REPOSITORY_PATH}" branch -d "${NEW_BRANCH_NAME}"
+
+  initialize_github_sha "${GIT_REPOSITORY_PATH}"
+  COMMAND_TO_RUN+=(-e VALIDATE_JSON="true")
+}
+
 initialize_github_sha() {
   local GIT_REPOSITORY_PATH="${1}"
   local TEST_GITHUB_SHA
@@ -138,31 +167,17 @@ run_test_case_merge_commit_push() {
   local GIT_REPOSITORY_PATH
   GIT_REPOSITORY_PATH="$(mktemp -d)"
 
-  initialize_git_repository_and_test_args "${GIT_REPOSITORY_PATH}" "test/data/github-event/github-event-push-merge-commit.json"
+  initialize_git_repository_and_test_args_merge_commit "${GIT_REPOSITORY_PATH}" "test/data/github-event/github-event-push-merge-commit.json"
+  git_log_graph "${GIT_REPOSITORY_PATH}"
+}
 
-  local NEW_BRANCH_NAME="branch-1"
-  git -C "${GIT_REPOSITORY_PATH}" switch --create "${NEW_BRANCH_NAME}"
-  cp -v "test/data/github-event/github-event-push-merge-commit.json" "${GIT_REPOSITORY_PATH}/new-file-1.json"
-  git -C "${GIT_REPOSITORY_PATH}" add .
-  git -C "${GIT_REPOSITORY_PATH}" commit -m "feat: add new file 1"
-  cp -v "test/data/github-event/github-event-push-merge-commit.json" "${GIT_REPOSITORY_PATH}/new-file-2.json"
-  git -C "${GIT_REPOSITORY_PATH}" add .
-  git -C "${GIT_REPOSITORY_PATH}" commit -m "feat: add new file 2"
-  cp -v "test/data/github-event/github-event-push-merge-commit.json" "${GIT_REPOSITORY_PATH}/new-file-3.json"
-  git -C "${GIT_REPOSITORY_PATH}" add .
-  git -C "${GIT_REPOSITORY_PATH}" commit -m "feat: add new file 3"
-  git -C "${GIT_REPOSITORY_PATH}" switch "${DEFAULT_BRANCH}"
-  # Force the creation of a merge commit
-  git -C "${GIT_REPOSITORY_PATH}" merge \
-    -m "Merge commit" \
-    --no-ff \
-    "${NEW_BRANCH_NAME}"
-  git -C "${GIT_REPOSITORY_PATH}" branch -d "${NEW_BRANCH_NAME}"
+run_test_case_merge_commit_push_tag() {
+  local GIT_REPOSITORY_PATH
+  GIT_REPOSITORY_PATH="$(mktemp -d)"
 
-  git -C "${GIT_REPOSITORY_PATH}" log --all --graph --abbrev-commit --decorate --format=oneline
-
-  initialize_github_sha "${GIT_REPOSITORY_PATH}"
-  COMMAND_TO_RUN+=(-e VALIDATE_JSON="true")
+  initialize_git_repository_and_test_args_merge_commit "${GIT_REPOSITORY_PATH}" "test/data/github-event/github-event-push-tag-merge-commit.json"
+  git -C "${GIT_REPOSITORY_PATH}" tag "v1.0.1-beta"
+  git_log_graph "${GIT_REPOSITORY_PATH}"
 }
 
 run_test_case_use_find_and_ignore_gitignored_files() {

@@ -242,3 +242,14 @@ initialize_git_repository() {
   git -C "${GIT_REPOSITORY_PATH}" config user.name "Super-linter Test"
   git -C "${GIT_REPOSITORY_PATH}" config user.email "super-linter-test@example.com"
 }
+
+git_log_graph() {
+  local GIT_REPOSITORY_PATH="${1}"
+
+  git -C "${GIT_REPOSITORY_PATH}" log \
+    --abbrev-commit \
+    --all \
+    --decorate \
+    --format=oneline \
+    --graph
+}
