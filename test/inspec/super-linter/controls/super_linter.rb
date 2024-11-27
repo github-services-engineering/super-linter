@@ -146,6 +146,7 @@ control "super-linter-installed-commands" do
     { linter_name: "arm-ttk", version_command: "grep -iE 'version' '/usr/bin/arm-ttk' | xargs"},
     { linter_name: "asl-validator"},
     { linter_name: "bash-exec", expected_exit_status: 1}, # expect a return code = 1 because this linter doesn't support a "get linter version" command
+    { linter_name: "biome"},
     { linter_name: "black"},
     { linter_name: "cfn-lint"},
     { linter_name: "checkov"},
@@ -334,6 +335,7 @@ control "super-linter-installed-npm-packages" do
     "@babel/eslint-parser",
     "@babel/preset-react",
     "@babel/preset-typescript",
+    "@biomejs/biome",
     "@coffeelint/cli",
     "@ibm/tekton-lint",
     "@react-native/eslint-config",
@@ -528,6 +530,7 @@ control "super-linter-validate-files" do
     "/action/lib/.automation/.stylelintrc.json",
     "/action/lib/.automation/.tflint.hcl",
     "/action/lib/.automation/.yaml-lint.yml",
+    "/action/lib/.automation/biome.json",
     "/action/lib/.automation/phpcs.xml",
     "/action/lib/.automation/phpstan.neon",
     "/action/lib/.automation/psalm.xml",

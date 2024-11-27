@@ -1,0 +1,12 @@
+{
+  "formatter": {
+    "enabled": false,
+    "indentStyle": "tab",
+    "lineWidth": 120
+  },
+  "linter": {
+    "enabled": true,
+    "indentStyle": "tab",
+    "lineWidth": 120
+  }
+}
