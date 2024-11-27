@@ -340,6 +340,8 @@ CommandOptionsTest() {
   # shellcheck disable=SC2034
   GITHUB_ACTIONS_COMMAND_ARGS="-color -debug -verbose -version"
   # shellcheck disable=SC2034
+  JAVA_COMMAND_ARGS="-Dproperty1=value1 -version"
+  # shellcheck disable=SC2034
   KUBERNETES_KUBECONFORM_OPTIONS="-debug -verbose -v"
   # shellcheck disable=SC2034
   PERL_PERLCRITIC_OPTIONS="--gentle --count test/linters/perl/perl_good_1.pl"
@@ -352,6 +354,7 @@ CommandOptionsTest() {
 
   # Try running the commands
   "${LINTER_COMMANDS_ARRAY_GITHUB_ACTIONS[@]}"
+  "${LINTER_COMMANDS_ARRAY_JAVA[@]}"
   "${LINTER_COMMANDS_ARRAY_KUBERNETES_KUBECONFORM[@]}"
   "${LINTER_COMMANDS_ARRAY_PERL[@]}"
   # Rust Clippy is only available in the standard image, so we can't run it when
