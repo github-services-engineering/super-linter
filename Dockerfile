@@ -373,8 +373,35 @@ COPY --from=clj-kondo /bin/clj-kondo /usr/bin/
 # Install dart-sdk #
 ####################
 ENV DART_SDK=/usr/lib/dart
-COPY --from=dart "${DART_SDK}" "${DART_SDK}"
-RUN chmod 755 "${DART_SDK}" && chmod 755 "${DART_SDK}/bin"
+# These COPY directives may be compacted after --parents is supported
+COPY --from=dart --chmod=0755 \
+  "${DART_SDK}/version" \
+  "${DART_SDK}"/
+COPY --from=dart --chmod=0755 \
+  "${DART_SDK}/bin/dart" \
+  "${DART_SDK}/bin/dart.sym" \
+  "${DART_SDK}/bin"/
+COPY --from=dart --chmod=0755 \
+  "${DART_SDK}/bin/snapshots/analysis_server.dart.snapshot" \
+  "${DART_SDK}/bin/snapshots/dartdev.dart.snapshot" \
+  "${DART_SDK}/bin/snapshots/frontend_server_aot.dart.snapshot" \
+  "${DART_SDK}/bin/snapshots"/
+COPY --from=dart --chmod=0755 \
+  "${DART_SDK}/lib/_internal" \
+  "${DART_SDK}/lib/_internal"
+COPY --from=dart --chmod=0755 \
+  "${DART_SDK}/lib/async" \
+  "${DART_SDK}/lib/async"
+COPY --from=dart --chmod=0755 \
+  "${DART_SDK}/lib/convert" \
+  "${DART_SDK}/lib/convert"
+COPY --from=dart --chmod=0755 \
+  "${DART_SDK}/lib/core" \
+  "${DART_SDK}/lib/core"
+COPY --from=dart --chmod=0755 \
+  "${DART_SDK}/lib/io" \
+  "${DART_SDK}/lib/io"
+
 
 ########################
 # Install clang-format #
@@ -405,22 +432,7 @@ COPY --from=dotenv-linter /dotenv-linter /usr/bin/
 #########################
 # Configure Environment #
 #########################
-ENV PATH="${PATH}:/venvs/ansible-lint/bin"
-ENV PATH="${PATH}:/venvs/black/bin"
-ENV PATH="${PATH}:/venvs/checkov/bin"
-ENV PATH="${PATH}:/venvs/cfn-lint/bin"
-ENV PATH="${PATH}:/venvs/cpplint/bin"
-ENV PATH="${PATH}:/venvs/flake8/bin"
-ENV PATH="${PATH}:/venvs/isort/bin"
-ENV PATH="${PATH}:/venvs/mypy/bin"
-ENV PATH="${PATH}:/venvs/pyink/bin"
-ENV PATH="${PATH}:/venvs/pylint/bin"
-ENV PATH="${PATH}:/venvs/ruff/bin"
-ENV PATH="${PATH}:/venvs/snakefmt/bin"
-ENV PATH="${PATH}:/venvs/snakemake/bin"
-ENV PATH="${PATH}:/venvs/sqlfluff/bin"
-ENV PATH="${PATH}:/venvs/yamllint/bin"
-ENV PATH="${PATH}:/venvs/yq/bin"
+ENV PATH="${PATH}:/venvs/combined/bin"
 ENV PATH="${PATH}:/node_modules/.bin"
 ENV PATH="${PATH}:/usr/lib/go/bin"
 ENV PATH="${PATH}:${DART_SDK}/bin:/root/.pub-cache/bin"
@@ -490,7 +502,7 @@ ARG TARGETARCH
 ENV ARM_TTK_PSD1="/usr/lib/microsoft/arm-ttk/arm-ttk.psd1"
 ENV PATH="${PATH}:/var/cache/dotnet/tools:/usr/share/dotnet"
 
-# Install super-linter runtime dependencies
+# Install Rust linters
 RUN apk add --no-cache \
   rust-clippy \
   rustfmt
