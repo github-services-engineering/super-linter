@@ -31,7 +31,7 @@
     "next-pwa": "^5.6.0",
     "npm-groovy-lint": "^15.0.0",
     "postcss-less": "^6.0.0",
-    "prettier": "^3.3.3",
+    "prettier": "^3.4.2",
     "prettyjson": "^1.2.5",
     "pug": "^3.0.3",
     "react": "^18.3.1",
