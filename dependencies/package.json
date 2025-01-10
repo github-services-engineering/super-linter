@@ -11,7 +11,7 @@
     "@stoplight/spectral-cli": "^6.14.2",
     "@typescript-eslint/eslint-plugin": "^7.16.1",
     "asl-validator": "^3.9.0",
-    "commitlint": "^19.5.0",
+    "commitlint": "^19.6.1",
     "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^9.1.0",
