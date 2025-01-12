@@ -40,3 +40,9 @@ overrides:
     parser: jsonc-eslint-parser
     parserOptions:
       jsonSyntax: JSON5
+
+    # TSX files
+  - files:
+      - "*.tsx"
+    extends:
+      - plugin:@typescript-eslint/recommended
