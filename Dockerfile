@@ -8,29 +8,29 @@
 # Get dependency images as build stages #
 #########################################
 FROM tenable/terrascan:1.19.9 AS terrascan
-FROM alpine/terragrunt:1.9.8 AS terragrunt
+FROM alpine/terragrunt:1.10.3 AS terragrunt
 FROM dotenvlinter/dotenv-linter:3.3.0 AS dotenv-linter
-FROM ghcr.io/terraform-linters/tflint:v0.54.0 AS tflint
+FROM ghcr.io/terraform-linters/tflint:v0.55.0 AS tflint
 FROM ghcr.io/yannh/kubeconform:v0.6.7 AS kubeconfrm
-FROM alpine/helm:3.16.3 AS helm
-FROM golang:1.23.3-alpine AS golang
-FROM golangci/golangci-lint:v1.62.0 AS golangci-lint
-FROM goreleaser/goreleaser:v2.4.8 AS goreleaser
+FROM alpine/helm:3.16.4 AS helm
+FROM golang:1.23.4-alpine AS golang
+FROM golangci/golangci-lint:v1.63.4 AS golangci-lint
+FROM goreleaser/goreleaser:v2.5.1 AS goreleaser
 FROM hadolint/hadolint:v2.12.0-alpine AS dockerfile-lint
 FROM registry.k8s.io/kustomize/kustomize:v5.4.3 AS kustomize
-FROM hashicorp/terraform:1.9.8 AS terraform
+FROM hashicorp/terraform:1.10.4 AS terraform
 FROM koalaman/shellcheck:v0.10.0 AS shellcheck
-FROM mstruebing/editorconfig-checker:v3.0.3 AS editorconfig-checker
+FROM mstruebing/editorconfig-checker:v3.1.2 AS editorconfig-checker
 FROM mvdan/shfmt:v3.10.0 AS shfmt
-FROM rhysd/actionlint:1.7.4 AS actionlint
+FROM rhysd/actionlint:1.7.6 AS actionlint
 FROM scalameta/scalafmt:v3.8.3 AS scalafmt
-FROM zricethezav/gitleaks:v8.21.2 AS gitleaks
-FROM yoheimuta/protolint:0.50.5 AS protolint
+FROM zricethezav/gitleaks:v8.22.1 AS gitleaks
+FROM yoheimuta/protolint:0.52.0 AS protolint
 FROM ghcr.io/clj-kondo/clj-kondo:2024.11.14-alpine AS clj-kondo
-FROM dart:3.5.4-sdk AS dart
-FROM mcr.microsoft.com/dotnet/sdk:9.0.100-alpine3.20 AS dotnet-sdk
+FROM dart:3.6.1-sdk AS dart
+FROM mcr.microsoft.com/dotnet/sdk:9.0.101-alpine3.20 AS dotnet-sdk
 FROM mcr.microsoft.com/powershell:7.4-alpine-3.20 AS powershell
-FROM composer/composer:2.8.3 AS php-composer
+FROM composer/composer:2.8.4 AS php-composer
 
 FROM python:3.12.7-alpine3.20 AS clang-format
 
