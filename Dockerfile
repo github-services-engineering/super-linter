@@ -32,7 +32,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0.100-alpine3.20 AS dotnet-sdk
 FROM mcr.microsoft.com/powershell:7.4-alpine-3.20 AS powershell
 FROM composer/composer:2.8.3 AS php-composer
 
-FROM python:3.12.7-alpine3.20 AS clang-format
+FROM python:3.13.1-alpine3.20 AS clang-format
 
 RUN apk add --no-cache \
   build-base \
@@ -59,7 +59,7 @@ RUN cmake \
   && ninja clang-format \
   && mv /tmp/llvm-project/llvm/build/bin/clang-format /usr/bin
 
-FROM python:3.12.7-alpine3.20 AS python-builder
+FROM python:3.13.1-alpine3.20 AS python-builder
 
 RUN apk add --no-cache \
   bash
@@ -70,7 +70,7 @@ COPY dependencies/python/ /stage
 WORKDIR /stage
 RUN ./build-venvs.sh && rm -rfv /stage
 
-FROM python:3.12.7-alpine3.20 AS npm-builder
+FROM python:3.13.1-alpine3.20 AS npm-builder
 
 RUN apk add --no-cache \
   bash \
@@ -101,7 +101,7 @@ COPY TEMPLATES/.tflint.hcl /action/lib/.automation/
 # Initialize TFLint plugins so we get plugin versions listed when we ask for TFLint version
 RUN --mount=type=secret,id=GITHUB_TOKEN GITHUB_TOKEN=$(cat /run/secrets/GITHUB_TOKEN) tflint --init -c /action/lib/.automation/.tflint.hcl
 
-FROM python:3.12.7-alpine3.20 AS lintr-installer
+FROM python:3.13.1-alpine3.20 AS lintr-installer
 
 RUN apk add --no-cache \
   bash \
@@ -125,7 +125,7 @@ COPY dependencies/composer/composer.json dependencies/composer/composer.lock /ap
 RUN composer update \
   && composer audit
 
-FROM python:3.12.7-alpine3.20 AS base_image
+FROM python:3.13.1-alpine3.20 AS base_image
 
 LABEL com.github.actions.name="Super-Linter" \
   com.github.actions.description="Super-linter is a ready-to-run collection of linters and code analyzers, to help validate your source code." \
