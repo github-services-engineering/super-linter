@@ -10,7 +10,7 @@
     "@react-native/eslint-config": "^0.76.2",
     "@stoplight/spectral-cli": "^6.14.2",
     "@typescript-eslint/eslint-plugin": "^7.16.1",
-    "asl-validator": "^3.9.0",
+    "asl-validator": "^3.12.0",
     "commitlint": "^19.5.0",
     "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.4",
