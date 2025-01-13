@@ -1,5 +1,23 @@
 # Changelog
 
+## [7.3.0](https://github.com/super-linter/super-linter/compare/v7.2.1...v7.3.0) (2025-01-13)
+
+
+### 🚀 Features
+
+* add nbqa linter for jupyter notebooks ([#6240](https://github.com/super-linter/super-linter/issues/6240)) ([469f30e](https://github.com/super-linter/super-linter/commit/469f30eb53776d99cde52e60c0e21694a87124d4))
+
+
+### ⬆️ Dependency updates
+
+* **npm:** bump next ([#6468](https://github.com/super-linter/super-linter/issues/6468)) ([b5a246e](https://github.com/super-linter/super-linter/commit/b5a246e96b912dcfe71eb19b4aa62e453a02ebea))
+
+
+### 🧰 Maintenance
+
+* fix broken link to sqlfluff config ([#6475](https://github.com/super-linter/super-linter/issues/6475)) ([ae84419](https://github.com/super-linter/super-linter/commit/ae844193ed3e200e74ca4b0a523b7d61956720cb))
+* update arm test api version ([#6485](https://github.com/super-linter/super-linter/issues/6485)) ([a6fdbf7](https://github.com/super-linter/super-linter/commit/a6fdbf7f2acde46ab7a592cfff89a7a6e6a0a41b))
+
 ## [7.2.1](https://github.com/super-linter/super-linter/compare/v7.2.0...v7.2.1) (2024-12-12)
 
 
