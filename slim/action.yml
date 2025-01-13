@@ -4,7 +4,7 @@ author: "Super-linter contributors"
 description: "Super-linter is a ready-to-run collection of linters and code analyzers, to help validate your source code."
 runs:
   using: "docker"
-  image: "docker://ghcr.io/super-linter/super-linter:slim-v7.2.1" # x-release-please-version
+  image: "docker://ghcr.io/super-linter/super-linter:slim-v7.3.0" # x-release-please-version
 branding:
   icon: "check-square"
   color: "white"
